@@ -46,6 +46,37 @@ app.post("/tasks",(req,res)=>{
     res.status(201);
     res.json(task);
 });
+app.put("/tasks/:id",(req,res)=>{
+    const id=req.params.id;
+    const index=tasks.findIndex(e=>e.id==id);
+    if(index==-1){
+        res.status(404);
+        res.json({ "error": `Task ${id} not found` });
+    }
+    if(!req.body.title && !req.body.done){
+        res.status(400);
+        res.json({"error":"title and done are empty"});
+    }
+    if(req.body.title){
+        tasks[index].title=req.body.title;
+    }
+    if(req.body.done){
+        tasks[index].done=req.body.done;
+    }
+    res.status(200);
+    res.send(tasks[index]);
+});
+app.delete("/tasks/:id",(req,res)=>{
+    const id=req.params.id;
+    const index=tasks.findIndex(e=>e.id==id);
+    if(index==-1){
+        res.status(404);
+        res.json({ "error": `Task ${id} not found` });
+    }
+    tasks.splice(index,1);
+    res.status(200);
+    res.json({});
+})
 app.listen(PORT,err=>{
     console.log(`server is running on port ${PORT}`);
     if(err){
