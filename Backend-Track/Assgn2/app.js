@@ -15,7 +15,6 @@ if(count==0){
     db.exec("INSERT INTO tasks(id,title,done) VALUES(1,'Task 1',true),(2,'Task 2',false),(3,'Task 3',false) ");
     count=3;
 }
-tasks=db.prepare('SELECT * FROM TASKS').all();
 app.get("/",(req,res)=>{
     res.status(200);
     res.json({ "name": "Task API", "version": "1.0", "endpoints": ["/tasks"] });
@@ -25,13 +24,15 @@ app.get("/health",(req,res)=>{
     res.json({ "status": "OK" });
 })
 app.get("/tasks",(req,res)=>{
+    tasks=db.prepare('SELECT * FROM TASKS').all();
     res.status(200);
     res.send(tasks);
 });
 app.get("/tasks/:id",(req,res)=>{
     id=req.params.id;
-    let task=tasks.find(e=>e.id==id);
-    task?res.status(200).send(task):res.status(404).json({ "error": `Task ${id} not found` });
+    tasks=db.prepare("SELECT * FROM TASKS WHERE ID=?").all(id);
+
+    tasks.length>0?res.status(200).send(tasks):res.status(404).json({ "error": `Task ${id} not found` });
 });
 app.post("/tasks",(req,res)=>{
     const task=req.body;
