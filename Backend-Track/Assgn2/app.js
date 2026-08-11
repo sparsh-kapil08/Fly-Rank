@@ -2,22 +2,20 @@ const express=require("express");
 const swaggerUi=require("swagger-ui-express");
 const swaggerDocument=require("./openapi.json");
 const app=express();
+const database=require("better-sqlite3");
+const db=new database("tasks.db");
 const PORT=3000;
+let count=0;
+let tasks=[];
 app.use(express.json());
 app.use("/docs",swaggerUi.serve,swaggerUi.setup(swaggerDocument));
-let tasks=[{
-    id:1,
-    title:"Task 1",
-    done:true
-},{
-    id:2,
-    title:"Task 2",
-    done:false
-},{
-    id:3,
-    title:"Task 3",
-    done:false
-}];
+db.exec("CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY,title VARCHAR(225),done BOOLEAN)");
+count=db.prepare('SELECT COUNT(*) AS TOTAL FROM TASKS').get().TOTAL;
+if(count==0){
+    db.exec("INSERT INTO tasks(id,title,done) VALUES(1,'Task 1',true),(2,'Task 2',false),(3,'Task 3',false) ");
+    count=3;
+}
+tasks=db.prepare('SELECT * FROM TASKS').all();
 app.get("/",(req,res)=>{
     res.status(200);
     res.json({ "name": "Task API", "version": "1.0", "endpoints": ["/tasks"] });
