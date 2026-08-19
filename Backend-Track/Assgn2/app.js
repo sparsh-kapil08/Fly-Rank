@@ -35,16 +35,19 @@ app.get("/tasks/:id",(req,res)=>{
     tasks.length>0?res.status(200).send(tasks):res.status(404).json({ "error": `Task ${id} not found` });
 });
 app.post("/tasks",(req,res)=>{
-    const task=req.body;
+    let task=req.body;
     console.log(task);
     if(!task.title){
         res.status(400);
         res.json({"error":"title is empty"});
     };
+    const query=db.prepare("INSERT INTO TASKS(title,done) VALUES(?,?)");
+    query.run(task.title,0);
     const count=tasks.length;
     task.id=count+1;
     task.done=false;
     tasks.push(task);
+    task=db.prepare("SELECT * FROM TASKS WHERE TITLE=?").all(task.title);
     res.status(201);
     res.json(task);
 });
