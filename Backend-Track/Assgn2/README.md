@@ -1,16 +1,23 @@
-# Task API with Swagger UI
+# Task API with SQLite and Swagger UI
 
-This is a small Express task API with in-memory storage and Swagger UI docs served at `/docs`.
+This is a small Express task API backed by SQLite, with Swagger UI docs served at `/docs`.
+
+## Why SQLite?
+
+SQLite was chosen because the database is a single file, requires zero setup, and survives server restarts. It provides persistent storage without requiring a separate database server.
 
 ## Install and Run
 
-From `Backend-Track/Assgn2`, install dependencies and start the server with:
+From the repository root, install dependencies once and start the server with:
 
 ```bash
-npm install && node app.js
+npm install
+npm run app
 ```
 
 The API runs on `http://localhost:3000` and the Swagger UI is available at `http://localhost:3000/docs`.
+
+The database file is `tasks.db` in the repository root when started with the documented command. It is created automatically when the server starts. The file is usually git-ignored so each clone starts with a fresh database. On first startup, the app creates the `tasks` table and seeds three example tasks. Deleting `tasks.db` and running `npm run app` restores the initial data.
 
 ## Endpoints
 
@@ -43,12 +50,24 @@ Keep-Alive: timeout=5
 
 ![Swagger UI](swagger-ui.png)
 
-## SQL QUERY AND OUTPUT
-# Query
-SELECT * FROM TASKS;
-# OUTPUT
-1	Review5 docs	5
-2	Review	1
-6	Write OpenAPI docs	0
+## Database Screenshot
 
-It returned all the rows available in the table
+Add a screenshot of `tasks.db` open in DB Browser for SQLite and save it as `db-browser-screenshot.png` in this folder.
+
+![tasks.db open in DB Browser for SQLite](db-browser-screenshot.png)
+
+## Example SQL Query
+
+Example query run in Stage 4:
+
+```sql
+SELECT * FROM tasks;
+```
+
+This query returned the three seeded tasks:
+
+```text
+1 | Task 1 | 1
+2 | Task 2 | 0
+3 | Task 3 | 0
+```
