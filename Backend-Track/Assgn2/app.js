@@ -53,8 +53,8 @@ app.post("/tasks",(req,res)=>{
 });
 app.put("/tasks/:id",(req,res)=>{
     const id=req.params.id;
-    const index=tasks.findIndex(e=>e.id==id);
-    if(index==-1){
+    const index=db.prepare("SELECT * FROM TASKS WHERE ID=?").all(id);
+    if(index.length===0){
         res.status(404);
         res.json({ "error": `Task ${id} not found` });
     }
@@ -63,22 +63,25 @@ app.put("/tasks/:id",(req,res)=>{
         res.json({"error":"title and done are empty"});
     }
     if(req.body.title){
-        tasks[index].title=req.body.title;
+        db.prepare("UPDATE TASKS SET TITLE=? WHERE ID=?").run(req.body.title,req.params.id);
     }
     if(req.body.done){
-        tasks[index].done=req.body.done;
+        db.prepare("UPDATE TASKS SET DONE=? WHERE ID=?").run(req.body.done,req.params.id);
     }
     res.status(200);
-    res.send(tasks[index]);
+    const task=db.prepare("SELECT * FROM TASKS WHERE ID=?").run(req.params.id);
+    res.send(task);
 });
 app.delete("/tasks/:id",(req,res)=>{
     const id=req.params.id;
-    const index=tasks.findIndex(e=>e.id==id);
-    if(index==-1){
+    const index=db.prepare("SELECT * FROM TASKS WHERE ID=?").all(id);
+    if(index.length===0){
         res.status(404);
         res.json({ "error": `Task ${id} not found` });
     }
     tasks.splice(index,1);
+    db.prepare("DELETE FROM TASKS WHERE ID=?").run(req.params.id);
+
     res.status(200);
     res.json({});
 })

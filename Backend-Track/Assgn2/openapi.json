@@ -161,8 +161,8 @@
             "example": "Review docs"
           },
           "done": {
-            "type": "boolean",
-            "example": true
+            "type": "integer",
+            "example": 1
           }
         }
       }
