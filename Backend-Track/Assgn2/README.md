@@ -42,3 +42,13 @@ Keep-Alive: timeout=5
 ## Swagger Screenshot
 
 ![Swagger UI](swagger-ui.png)
+
+## SQL QUERY AND OUTPUT
+# Query
+SELECT * FROM TASKS;
+# OUTPUT
+1	Review5 docs	5
+2	Review	1
+6	Write OpenAPI docs	0
+
+It returned all the rows available in the table
