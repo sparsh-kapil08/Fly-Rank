@@ -39,6 +39,17 @@ app.post("/auth/login",async (req,res)=>{
         res.json({"token":data.session.access_token,"refresh_token":data.session.refresh_token});
     }
 })
+app.get("/public/info",async (req,res)=>{
+    res.status(200);
+    res.json({ "message": "Welcome stranger! This info is public."})
+})
+app.get("/protected/profile",async(req,res)=>{
+    const {data,error}=await client.auth.getSession();
+    if(error || !data.session){
+        res.status(401);
+        res.json({ "error": "Access token required" } );
+    }
+})
 app.listen(PORT, () => {
   console.log(`Server running and connected to supabase`);
 });
