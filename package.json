@@ -17,7 +17,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "app":"nodemon ./Backend-Track/Assgn2+Assgn3/app.js",
-    "test":"nodemone ./Backend-Track/Assgn4/src/server.js"
+    "test2":"nodemon ./Backend-Track/Assgn4/src/server.js"
 
   },
   "dependencies": {
