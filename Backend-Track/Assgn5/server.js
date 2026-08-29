@@ -43,16 +43,44 @@ app.get("/public/info",async (req,res)=>{
     res.status(200);
     res.json({ "message": "Welcome stranger! This info is public."})
 })
-app.get("/protected/profile",async(req,res)=>{
-    const {data,error}=await client.auth.getSession();
+const protected=async (req,res,next)=>{
+    try{
+        const {data,error}=await client.auth.getSession();
 
-    if(error || !data.session.access_token){
-        console.log(data);
-        res.status(401);
-        res.json({ "error": "Access token required" } );
+        if(error || !data.session.access_token){
+            console.log(data);
+            res.status(401);
+            res.json({ "error": "Access token required" } );
     }
+          
+    req.user=data.session.user;
+    next();
+    }catch(err){
+        res.status(500);
+        res.json({"error":"Internal Server Error"});    
+}};
+app.get("/protected/profile", protected, async(req,res)=>{
     res.status(200);
-    res.json({"email":data.session.user.email,"id":data.session.user.id,"date":data.session.user.created_at});
+    res.json({"email":req.user.email,"id":req.user.id,"date":req.user.created_at})
+})
+app.post("/auth/logout",protected,async(req,res)=>{
+    const {data,error}=await client.auth.signOut();
+    if(error){
+        res.status(500);
+        res.json({"error":"Internal Server Error"});
+    }else{
+        res.status(204);
+        res.json({"message":"Logged Out"});
+    }
+})
+app.get("/protected/dashboard",protected,async(req,res)=>{
+    if(req.user.email){
+        res.status(200);
+        res.json({"message":"Welcome to the dashboard"});
+    }else{
+        res.status(401);
+        res.json({"error":"Unauthorized"});
+    }
 })
 app.listen(PORT, () => {
   console.log(`Server running and connected to supabase`);
