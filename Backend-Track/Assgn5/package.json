@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "docs": "node swagger.js"
+    "docs": "node swagger.js",
+    "dev": "node dev.js"
   },
   "keywords": [],
   "author": "",
