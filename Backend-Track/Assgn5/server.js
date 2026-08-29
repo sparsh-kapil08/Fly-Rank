@@ -45,10 +45,14 @@ app.get("/public/info",async (req,res)=>{
 })
 app.get("/protected/profile",async(req,res)=>{
     const {data,error}=await client.auth.getSession();
-    if(error || !data.session){
+
+    if(error || !data.session.access_token){
+        console.log(data);
         res.status(401);
         res.json({ "error": "Access token required" } );
     }
+    res.status(200);
+    res.json({"email":data.session.user.email,"id":data.session.user.id,"date":data.session.user.created_at});
 })
 app.listen(PORT, () => {
   console.log(`Server running and connected to supabase`);
